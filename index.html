@@ -6,6 +6,7 @@
     <title>Resa - Growth Engine for Amazon & Beyond</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+      html { scroll-behavior: smooth; }
       .fade-in-up {
         opacity: 0;
         transform: translateY(30px);
@@ -45,7 +46,43 @@
     </style>
   </head>
   <body class="bg-white text-gray-900">
-    <!-- Header removed as per user request -->
+    <!-- Modern Header -->
+    <header class="w-full bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+        <a href="#" class="flex items-center gap-2">
+          <img src="assets/nobg.png" alt="Resa Brand Logo" class="h-14 w-auto drop-shadow" />
+        </a>
+        <nav class="hidden md:flex gap-6 font-semibold text-gray-700">
+          <a href="#" class="hover:text-blue-600 transition">Home</a>
+          <a href="#about" class="hover:text-blue-600 transition">About</a>
+          <a href="#services" class="hover:text-blue-600 transition">Services</a>
+          <a href="#testimonials" class="hover:text-blue-600 transition">Testimonials</a>
+          <a href="#contact" class="hover:text-blue-600 transition">Contact</a>
+        </nav>
+        <!-- Hamburger for mobile -->
+        <button id="nav-toggle" class="md:hidden flex items-center px-2 py-1 border rounded text-gray-700 border-gray-400 hover:text-blue-600 hover:border-blue-600 transition" aria-label="Open navigation">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+      <!-- Mobile nav -->
+      <div id="mobile-nav" class="md:hidden hidden bg-white shadow-lg px-6 pb-4">
+        <a href="#" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Home</a>
+        <a href="#about" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">About</a>
+        <a href="#services" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Services</a>
+        <a href="#testimonials" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Testimonials</a>
+        <a href="#contact" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Contact</a>
+      </div>
+    </header>
+    <script>
+      // Hamburger menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const navToggle = document.getElementById('nav-toggle');
+        const mobileNav = document.getElementById('mobile-nav');
+        navToggle.addEventListener('click', () => {
+          mobileNav.classList.toggle('hidden');
+        });
+      });
+    </script>
     <!-- Modal Popup for Booking a Call -->
     <div id="modal-bg" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-bg">
       <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md relative animate-fadeInUp">
@@ -108,7 +145,7 @@
     </section>
 
     <!-- SOLUTION SECTION -->
-    <section class="bg-gray-100 py-16 px-6 text-center fade-in-up" data-delay="0.3s">
+    <section class="bg-gray-100 py-16 px-6 text-center fade-in-up" data-delay="0.3s" id="about">
       <h2 class="text-3xl font-semibold mb-4">Meet Resa: Your Growth Engine for Amazon & Beyond</h2>
       <img src="assets/nobg.png" alt="Resa Brand Logo" class="mx-auto mb-8 h-32 w-auto drop-shadow-lg" />
       <p class="text-lg max-w-3xl mx-auto">
@@ -118,7 +155,7 @@
     </section>
 
     <!-- BENEFITS SECTION -->
-    <section class="py-16 px-6 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch scale-in" data-delay="0.4s">
+    <section class="py-16 px-6 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch scale-in" data-delay="0.4s" id="services">
       <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between items-center text-center h-full min-h-[450px]">
         <div>
           <h3 class="text-xl font-bold mb-2">We Track, Tweak, and Scale—Daily</h3>
@@ -143,7 +180,7 @@
     </section>
 
     <!-- TESTIMONIALS SECTION -->
-    <section class="bg-blue-50 py-16 px-6 text-center slide-in-left" data-delay="0.5s">
+    <section class="bg-blue-50 py-16 px-6 text-center slide-in-left" data-delay="0.5s" id="testimonials">
       <h2 class="text-2xl font-semibold mb-8">Brands That Trust Resa</h2>
       <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
         <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center">
@@ -204,7 +241,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white pt-12 pb-6 mt-16">
+    <footer class="bg-gray-900 text-white pt-12 pb-6 mt-16" id="contact">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between px-6 gap-8">
         <div class="flex flex-col items-center md:items-start gap-3 mb-8 md:mb-0">
           <div class="flex items-center gap-3">
