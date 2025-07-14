@@ -21,6 +21,8 @@ import {
   Heart,
   Share2,
   Play,
+  UserPlus,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { MainNav } from "../components/main-nav";
@@ -259,6 +261,70 @@ const brandShowcase = [
   },
 ];
 
+// TrendingNichesSection component
+function TrendingNichesSection() {
+  const [niches, setNiches] = useState<{ name: string; insight: string; global_activity: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/trending-niches")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch trending niches");
+        return res.json();
+      })
+      .then(data => {
+        setNiches(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading trending niches...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const icons = ['🤖','🌱','🎮','💸','✈️','🧩'];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+      {niches.map((niche, idx) => (
+        <div
+          key={idx}
+          className="relative group p-6 bg-white/60 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200 w-full max-w-xs transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+        >
+          {/* Optional: Icon or Emoji */}
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full shadow-lg border-4 border-white">
+            <span className="text-2xl">{icons[idx % icons.length]}</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2 mt-6 text-center">{niche.name}</h3>
+          <blockquote className="italic text-gray-700 mb-4 text-center border-l-4 border-purple-300 pl-3">
+            “{niche.insight}”
+          </blockquote>
+          <div className="flex flex-col items-center mt-4">
+            <span className="text-xs text-gray-500 mb-1">Global Activity</span>
+            <div className="w-full flex items-center justify-center">
+              <div className="w-24 h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-3 rounded-full transition-all duration-300 ${
+                    niche.global_activity >= 4
+                      ? 'bg-gradient-to-r from-purple-500 to-blue-500'
+                      : 'bg-gradient-to-r from-yellow-400 to-orange-500'
+                  }`}
+                  style={{ width: `${(niche.global_activity / 5) * 100}%` }}
+                />
+              </div>
+              <span className="ml-2 font-semibold text-purple-700">{niche.global_activity}/5</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function HomePage() {
   const { isAuthenticated, user } = useAuth();
   
@@ -279,30 +345,6 @@ export default function HomePage() {
   // One-time animation state
   const [hasAnimatedTrending, setHasAnimatedTrending] = useState(false);
   const [hasAnimatedBrands, setHasAnimatedBrands] = useState(false);
-
-  // Test Supabase connection
-  const [isTesting, setIsTesting] = useState(false);
-  
-  const testSupabase = async () => {
-    if (isTesting) return;
-    setIsTesting(true);
-    try {
-      console.log("Testing Supabase connection...");
-      const { data, error } = await supabase.from('users').select('count').limit(1);
-      if (error) {
-        console.error("Supabase test failed:", error);
-        alert("Supabase test failed: " + error.message);
-      } else {
-        console.log("Supabase test successful:", data);
-        alert("Supabase test successful!");
-      }
-    } catch (error) {
-      console.error("Supabase test error:", error);
-      alert("Supabase test error: " + error);
-    } finally {
-      setTimeout(() => setIsTesting(false), 2000);
-    }
-  };
 
   // Set up intersection observer for scroll detection (one-time animation)
   useEffect(() => {
@@ -417,17 +459,17 @@ export default function HomePage() {
                     <span className="text-sm font-medium text-gray-700">Welcome back!</span>
                   </div>
                   <div className="space-y-6 w-full">
-                    <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-gray-900 leading-tight w-full text-center lg:text-left">
-                      Welcome back,{" "}
-                      <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
-                        {user.user_metadata?.name || user.email?.split('@')[0]}
-                      </span>
+                    <h1 className="text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                      INPACT AI
                     </h1>
+                    <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mt-4">
+                      Creator Collaboration Platform
+                    </h2>
                     <p className="text-xl lg:text-2xl text-gray-700 max-w-2xl mx-auto lg:mx-0 leading-relaxed w-full text-center lg:text-left">
                       Ready to grow your creator business? Explore new opportunities, track your performance, and connect with brands.
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                     <Button
                       size="lg"
                       className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-4 text-lg"
@@ -446,13 +488,66 @@ export default function HomePage() {
                       </Link>
                     </Button>
                   </div>
+                  {/* How It Works Row */}
+                  <div className="flex flex-col sm:flex-row gap-8 justify-center mt-19">
+                    <div className="flex flex-col items-center text-center">
+                      <UserPlus className="h-10 w-10 mb-2 text-purple-600" />
+                      <span className="font-semibold text-gray-800">Create your profile</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <Sparkles className="h-10 w-10 mb-2 text-blue-600" />
+                      <span className="font-semibold text-gray-800">Get matched by AI</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <Handshake className="h-10 w-10 mb-2 text-green-600" />
+                      <span className="font-semibold text-gray-800">Collaborate & grow</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Why Choose Inpact AI Section (for logged out users) */}
+          <section className="w-full py-20 bg-gradient-to-b from-white via-blue-50 to-purple-50">
+            <div className="container mx-auto px-6 md:px-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">Why Choose Inpact AI?</h2>
+              <p className="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Powerful tools for both brands and creators to connect, collaborate, and grow.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {/* Brands Column */}
+                <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center border border-purple-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Rocket className="h-8 w-8 text-purple-600" />
+                    <span className="text-xl font-semibold text-purple-700">For Brands</span>
+                  </div>
+                  <ul className="space-y-4 text-gray-700 w-full">
+                    <li className="flex items-start gap-3"><Handshake className="h-6 w-6 text-blue-500" /> AI-driven creator matching for your campaigns</li>
+                    <li className="flex items-start gap-3"><BarChart3 className="h-6 w-6 text-green-500" /> Real-time performance analytics & ROI tracking</li>
+                    <li className="flex items-start gap-3"><Layers className="h-6 w-6 text-pink-500" /> Smart pricing & budget optimization</li>
+                    <li className="flex items-start gap-3"><MessageSquare className="h-6 w-6 text-orange-500" /> Streamlined communication & contract management</li>
+                  </ul>
+                </div>
+                {/* Creators Column */}
+                <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center border border-blue-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Users className="h-8 w-8 text-blue-600" />
+                    <span className="text-xl font-semibold text-blue-700">For Creators</span>
+                  </div>
+                  <ul className="space-y-4 text-gray-700 w-full">
+                    <li className="flex items-start gap-3"><TrendingUp className="h-6 w-6 text-purple-500" /> Get discovered by top brands in your niche</li>
+                    <li className="flex items-start gap-3"><Award className="h-6 w-6 text-yellow-500" /> Fair sponsorship deals & transparent payments</li>
+                    <li className="flex items-start gap-3"><BookOpen className="h-6 w-6 text-indigo-500" /> AI-powered content & contract assistant</li>
+                    <li className="flex items-start gap-3"><Heart className="h-6 w-6 text-pink-500" /> Grow your audience & track your impact</li>
+                  </ul>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Trending Niches Section - Centered Grid, No Extra Right Space */}
-          <section ref={trendingRef} className="w-full py-24 relative">
+          <section ref={trendingRef} className="w-full py-24 bg-gradient-to-b from-blue-50 via-white to-purple-50 relative">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-blue-50/50"></div>
             <div
               className={`max-w-7xl mx-auto relative z-10 px-2 sm:px-4 md:px-8 text-center transition-all duration-1000 transform ${
@@ -467,56 +562,18 @@ export default function HomePage() {
               <p className="mt-4 text-lg text-gray-700 mb-12">
                 Discover the fastest-growing content categories and opportunities.
               </p>
-              <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-                {trendingNiches.map((niche, idx) => (
-                  <div
-                    key={idx}
-                    className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 hover:bg-white/80 w-full max-w-xs"
-                  >
-                    <div className={`flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${niche.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <niche.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {niche.name}
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-600">Growth</p>
-                        <p className="font-semibold text-green-600">{niche.growth}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Creators</p>
-                        <p className="font-semibold text-gray-900">{niche.creators}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Avg Engagement</p>
-                        <p className="font-semibold text-blue-600">{niche.avgEngagement}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Opportunity</p>
-                        <p className="font-semibold text-purple-600">High</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <TrendingNichesSection />
             </div>
           </section>
 
           {/* Brand Showcase Section - Centered Grid, No Extra Right Space */}
-          <section ref={successStoriesRef} className="w-full py-24 relative">
+          <section ref={successStoriesRef} className="w-full py-24 bg-gradient-to-b from-purple-50 via-white to-blue-50 relative">
             <div className="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
-            <div
-              className={`max-w-7xl mx-auto relative z-10 px-2 sm:px-4 md:px-8 text-center transition-all duration-1000 transform ${
-                isSuccessStoriesVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-20"
-              }`}
-            >
-              <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4">
+            <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+              <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4 text-center">
                 Brands Seeking Creators
               </h2>
-              <p className="mt-4 text-lg text-gray-700 mb-12">
+              <p className="mt-4 text-lg text-gray-700 mb-12 text-center">
                 Connect with companies actively looking for creators like you.
               </p>
               <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
@@ -674,13 +731,8 @@ export default function HomePage() {
                 <div className="space-y-6">
                   {/* 3D Text Effect for "Inpact AI" */}
                   <div className="relative">
-                    <h1 className="text-5xl lg:text-7xl font-black tracking-tight text-gray-900 leading-tight">
-                      <span className="relative">
-                        <span className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-lg blur opacity-75 animate-pulse"></span>
-                        <span className="relative bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
-                          Inpact AI
-                        </span>
-                      </span>
+                    <h1 className="text-5xl lg:text-7xl font-black tracking-tight leading-tight uppercase bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                      INPACT AI
                     </h1>
                     <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mt-4">
                       Creator Collaboration Platform
@@ -705,33 +757,23 @@ export default function HomePage() {
                     variant="outline"
                     size="lg"
                     className="border-white/30 bg-white/10 backdrop-blur-sm text-gray-900 hover:bg-white/20 transition-all duration-300 px-8 py-4 text-lg"
-                    onClick={testSupabase}
-                    disabled={isTesting}
-                  >
-                    {isTesting ? "Testing..." : "Test Connection"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-white/30 bg-white/10 backdrop-blur-sm text-gray-900 hover:bg-white/20 transition-all duration-300 px-8 py-4 text-lg"
                   >
                     Learn More
                   </Button>
                 </div>
-                
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">10K+</div>
-                    <div className="text-sm text-gray-600">Creators</div>
+                {/* How It Works Row */}
+                <div className="flex flex-col sm:flex-row gap-8 justify-center mt-19">
+                  <div className="flex flex-col items-center text-center">
+                    <UserPlus className="h-10 w-10 mb-2 text-purple-600" />
+                    <span className="font-semibold text-gray-800">Create your profile</span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">500+</div>
-                    <div className="text-sm text-gray-600">Brands</div>
+                  <div className="flex flex-col items-center text-center">
+                    <Sparkles className="h-10 w-10 mb-2 text-blue-600" />
+                    <span className="font-semibold text-gray-800">Get matched by AI</span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-indigo-600">$2M+</div>
-                    <div className="text-sm text-gray-600">Revenue</div>
+                  <div className="flex flex-col items-center text-center">
+                    <Handshake className="h-10 w-10 mb-2 text-green-600" />
+                    <span className="font-semibold text-gray-800">Collaborate & grow</span>
                   </div>
                 </div>
               </div>
@@ -768,55 +810,52 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features Section - Revealed on Scroll */}
-        <section ref={featuresRef} className="w-full py-24 relative">
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
-          <div
-            className={`container relative z-10 px-6 md:px-12 text-center transition-all duration-1000 transform ${
-              isFeaturesVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-20"
-            }`}
-          >
-            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4">
-              Key Features
-            </h2>
-            <p className="mt-4 text-lg text-gray-700 mb-12">
-              Leverage AI to transform your creator partnerships and brand sponsorships.
+        {/* Why Choose Inpact AI Section (for logged out users) */}
+        <section className="w-full py-20 bg-gradient-to-b from-white via-blue-50 to-purple-50">
+          <div className="container mx-auto px-6 md:px-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">Why Choose Inpact AI?</h2>
+            <p className="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Powerful tools for both brands and creators to connect, collaborate, and grow.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map(({ icon: Icon, title, desc, gradient }, idx) => (
-                <div
-                  key={idx}
-                  className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 hover:bg-white/80"
-                >
-                  <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br ${gradient} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {title}
-                  </h3>
-                  <p className="text-gray-600">{desc}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* Brands Column */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center border border-purple-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <Rocket className="h-8 w-8 text-purple-600" />
+                  <span className="text-xl font-semibold text-purple-700">For Brands</span>
                 </div>
-              ))}
+                <ul className="space-y-4 text-gray-700 w-full">
+                  <li className="flex items-start gap-3"><Handshake className="h-6 w-6 text-blue-500" /> AI-driven creator matching for your campaigns</li>
+                  <li className="flex items-start gap-3"><BarChart3 className="h-6 w-6 text-green-500" /> Real-time performance analytics & ROI tracking</li>
+                  <li className="flex items-start gap-3"><Layers className="h-6 w-6 text-pink-500" /> Smart pricing & budget optimization</li>
+                  <li className="flex items-start gap-3"><MessageSquare className="h-6 w-6 text-orange-500" /> Streamlined communication & contract management</li>
+                </ul>
+              </div>
+              {/* Creators Column */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center border border-blue-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <Users className="h-8 w-8 text-blue-600" />
+                  <span className="text-xl font-semibold text-blue-700">For Creators</span>
+                </div>
+                <ul className="space-y-4 text-gray-700 w-full">
+                  <li className="flex items-start gap-3"><TrendingUp className="h-6 w-6 text-purple-500" /> Get discovered by top brands in your niche</li>
+                  <li className="flex items-start gap-3"><Award className="h-6 w-6 text-yellow-500" /> Fair sponsorship deals & transparent payments</li>
+                  <li className="flex items-start gap-3"><BookOpen className="h-6 w-6 text-indigo-500" /> AI-powered content & contract assistant</li>
+                  <li className="flex items-start gap-3"><Heart className="h-6 w-6 text-pink-500" /> Grow your audience & track your impact</li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Success Stories Section */}
-        <section ref={successStoriesRef} className="w-full py-24 relative">
+        <section ref={successStoriesRef} className="w-full py-24 bg-gradient-to-b from-purple-50 via-white to-blue-50 relative">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-blue-50/50"></div>
-          <div
-            className={`container relative z-10 px-6 md:px-12 text-center transition-all duration-1000 transform ${
-              isSuccessStoriesVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-20"
-            }`}
-          >
-            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4">
+          <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4 text-center">
               Success Stories
             </h2>
-            <p className="mt-4 text-lg text-gray-700 mb-12">
+            <p className="mt-4 text-lg text-gray-700 mb-12 text-center">
               Real creators achieving amazing results with brand partnerships.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -864,100 +903,16 @@ export default function HomePage() {
         </section>
 
         {/* Trending Niches Section */}
-        <section ref={trendingRef} className="w-full py-24 relative">
+        <section ref={trendingRef} className="w-full py-24 bg-gradient-to-b from-blue-50 via-white to-purple-50 relative">
           <div className="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
-          <div
-            className={`container relative z-10 px-6 md:px-12 text-center transition-all duration-1000 transform ${
-              isTrendingVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-20"
-            }`}
-          >
-            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4">
+          <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4 text-center">
               Trending Niches
             </h2>
-            <p className="mt-4 text-lg text-gray-700 mb-12">
+            <p className="mt-4 text-lg text-gray-700 mb-12 text-center">
               Discover the fastest-growing content categories and opportunities.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {trendingNiches.map((niche, idx) => (
-                <div
-                  key={idx}
-                  className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 hover:bg-white/80"
-                >
-                  <div className={`flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${niche.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <niche.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {niche.name}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-600">Growth</p>
-                      <p className="font-semibold text-green-600">{niche.growth}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Creators</p>
-                      <p className="font-semibold text-gray-900">{niche.creators}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Avg Engagement</p>
-                      <p className="font-semibold text-blue-600">{niche.avgEngagement}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">Opportunity</p>
-                      <p className="font-semibold text-purple-600">High</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Creator Resources Section */}
-        <section ref={resourcesRef} className="w-full py-24 relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50"></div>
-          <div
-            className={`container relative z-10 px-6 md:px-12 text-center transition-all duration-1000 transform ${
-              isResourcesVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-20"
-            }`}
-          >
-            <h2 className="text-3xl font-bold sm:text-4xl text-gray-900 mb-4">
-              Creator Resources
-            </h2>
-            <p className="mt-4 text-lg text-gray-700 mb-12">
-              Stay ahead with the latest insights, tools, and strategies.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {creatorResources.map((resource, idx) => (
-                <div
-                  key={idx}
-                  className="group p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 hover:bg-white/90"
-                >
-                  <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-purple-100 to-blue-100 mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <resource.icon className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div className="text-left">
-                    <span className="inline-block px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full mb-2">
-                      {resource.category}
-                    </span>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {resource.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-3">{resource.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">{resource.readTime}</span>
-                      <button className="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                        Read More →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <TrendingNichesSection />
           </div>
         </section>
 
@@ -982,17 +937,17 @@ export default function HomePage() {
               Empowering creators to build meaningful partnerships and grow their businesses.
             </p>
             <div className="mt-6 flex justify-center space-x-6 text-sm text-gray-400">
-              <Link to="/login" className="hover:text-white transition-colors">
-                Login
+              <Link to="/dashboard" className="hover:text-white transition-colors">
+                Dashboard
               </Link>
-              <Link to="/signup" className="hover:text-white transition-colors">
-                Sign Up
+              <Link to="/dashboard/sponsorships" className="hover:text-white transition-colors">
+                Opportunities
               </Link>
-              <Link to="/about" className="hover:text-white transition-colors">
-                About
+              <Link to="/dashboard/analytics" className="hover:text-white transition-colors">
+                Analytics
               </Link>
-              <Link to="/contact" className="hover:text-white transition-colors">
-                Contact
+              <Link to="/dashboard/messages" className="hover:text-white transition-colors">
+                Messages
               </Link>
             </div>
           </div>
