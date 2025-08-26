@@ -1,13 +1,265 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inpact - AI-Powered Creator Collaboration Platform</title>
+    <title>Resa - Growth Engine for Amazon & Beyond</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      html { scroll-behavior: smooth; }
+      .fade-in-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .slide-in-left {
+        opacity: 0;
+        transform: translateX(-40px);
+        animation: slideInLeft 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
+      }
+      @keyframes slideInLeft {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .scale-in {
+        opacity: 0;
+        transform: scale(0.95);
+        animation: scaleIn 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+      }
+      @keyframes scaleIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .modal-bg {
+        background: rgba(0,0,0,0.5);
+      }
+    </style>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-white text-gray-900">
+    <!-- Modern Header -->
+    <header class="w-full bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+        <a href="#" class="flex items-center gap-2">
+          <img src="assets/nobg.png" alt="Resa Brand Logo" class="h-14 w-auto drop-shadow" />
+        </a>
+        <nav class="hidden md:flex gap-6 font-semibold text-gray-700">
+          <a href="#" class="hover:text-blue-600 transition">Home</a>
+          <a href="#about" class="hover:text-blue-600 transition">About</a>
+          <a href="#services" class="hover:text-blue-600 transition">Services</a>
+          <a href="#testimonials" class="hover:text-blue-600 transition">Testimonials</a>
+          <a href="#contact" class="hover:text-blue-600 transition">Contact</a>
+        </nav>
+        <!-- Hamburger for mobile -->
+        <button id="nav-toggle" class="md:hidden flex items-center px-2 py-1 border rounded text-gray-700 border-gray-400 hover:text-blue-600 hover:border-blue-600 transition" aria-label="Open navigation">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+      <!-- Mobile nav -->
+      <div id="mobile-nav" class="md:hidden hidden bg-white shadow-lg px-6 pb-4">
+        <a href="#" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Home</a>
+        <a href="#about" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">About</a>
+        <a href="#services" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Services</a>
+        <a href="#testimonials" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Testimonials</a>
+        <a href="#contact" class="block py-2 font-semibold text-gray-700 hover:text-blue-600">Contact</a>
+      </div>
+    </header>
+    <script>
+      // Hamburger menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const navToggle = document.getElementById('nav-toggle');
+        const mobileNav = document.getElementById('mobile-nav');
+        navToggle.addEventListener('click', () => {
+          mobileNav.classList.toggle('hidden');
+        });
+      });
+    </script>
+    <!-- Modal Popup for Booking a Call -->
+    <div id="modal-bg" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-bg">
+      <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md relative animate-fadeInUp">
+        <button id="close-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        <h2 class="text-xl font-bold mb-4 text-center">Book a Free Strategy Call</h2>
+        <form action="https://formspree.io/f/xnnvovqa" method="POST" class="space-y-4">
+          <input type="text" name="name" required placeholder="Your Name" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="email" name="email" required placeholder="Your Email" class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <textarea name="message" required placeholder="Tell us about your brand or what you need help with..." class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <input type="hidden" name="_subject" value="New Strategy Call Request from Resa Home Page" />
+          <input type="hidden" name="_cc" value="saahi.dubey77@gmail.com" />
+          <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">Submit</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      // Modal open/close logic
+      document.addEventListener('DOMContentLoaded', function() {
+        const modalBg = document.getElementById('modal-bg');
+        const openBtns = document.querySelectorAll('.open-modal');
+        const closeBtn = document.getElementById('close-modal');
+        openBtns.forEach(btn => btn.addEventListener('click', () => modalBg.classList.remove('hidden')));
+        closeBtn.addEventListener('click', () => modalBg.classList.add('hidden'));
+        modalBg.addEventListener('click', (e) => { if (e.target === modalBg) modalBg.classList.add('hidden'); });
+      });
+      // Fade-in and other animations on scroll
+      function animateOnScroll() {
+        document.querySelectorAll('.fade-in-up, .slide-in-left, .scale-in').forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 50) {
+            el.style.animationDelay = el.dataset.delay || '0s';
+            el.classList.add('animated');
+          }
+        });
+      }
+      window.addEventListener('scroll', animateOnScroll);
+      window.addEventListener('DOMContentLoaded', animateOnScroll);
+    </script>
+    <!-- HERO SECTION -->
+    <section class="text-center py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white fade-in-up" data-delay="0.1s">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">More Sales. Real ROI. None of the Agency Fluff.</h1>
+      <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
+        You've got the product. We bring the strategy, execution, and firepower to scale it—without drowning you in dashboards and buzzwords.
+      </p>
+      <button class="bg-white text-blue-600 font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-gray-100 open-modal transition" type="button">
+        Book a Free Strategy Call
+      </button>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="py-16 px-6 max-w-4xl mx-auto text-center fade-in-up" data-delay="0.2s">
+      <h2 class="text-3xl font-semibold mb-4">Tired of Agencies Who Can't Deliver Sales—Only Reports?</h2>
+      <p class="text-lg">
+        If you've ever wondered "Where is all this ad spend going?"—you're not alone.
+        Maybe your Amazon PPC is draining budget. Or your listings look great but don't convert. Or you've worked with teams who sounded smart but never moved the needle.
+      </p>
+      <p class="text-lg mt-4">
+        We get it. You don't need another agency. You need a partner obsessed with making your brand win.
+      </p>
+    </section>
+
+    <!-- SOLUTION SECTION -->
+    <section class="bg-gray-100 py-16 px-6 text-center fade-in-up" data-delay="0.3s" id="about">
+      <h2 class="text-3xl font-semibold mb-4">Meet Resa: Your Growth Engine for Amazon & Beyond</h2>
+      <img src="assets/nobg.png" alt="Resa Brand Logo" class="mx-auto mb-8 h-32 w-auto drop-shadow-lg" />
+      <p class="text-lg max-w-3xl mx-auto">
+        We're not here to impress you with jargon. We're here to make your sales chart go up.
+        At Resa, we blend deep Amazon expertise, high-converting creatives, and performance marketing that's actually tied to profit—not just traffic.
+      </p>
+    </section>
+
+    <!-- BENEFITS SECTION -->
+    <section class="py-16 px-6 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch scale-in" data-delay="0.4s" id="services">
+      <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between items-center text-center h-full min-h-[450px]">
+        <div>
+          <h3 class="text-xl font-bold mb-2">We Track, Tweak, and Scale—Daily</h3>
+          <p class="text-md">Custom dashboards show exactly what's working (and what's not)—no guesswork.</p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80" alt="Analytics dashboard" class="mt-4 w-full h-48 object-cover rounded-lg" />
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between items-center text-center h-full min-h-[450px]">
+        <div>
+          <h3 class="text-xl font-bold mb-2">We Speak Amazon—Fluently</h3>
+          <p class="text-md">We live and breathe Amazon's ever-changing playbook so you don't have to.</p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80" alt="Amazon expertise" class="mt-4 w-full h-48 object-cover rounded-lg" />
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between items-center text-center h-full min-h-[450px]">
+        <div>
+          <h3 class="text-xl font-bold mb-2">Creative That Converts, Not Just Looks Good</h3>
+          <p class="text-md">From listing visuals to A+ content—we blend design and strategy for clicks and conversions.</p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Creative visuals" class="mt-4 w-full h-48 object-cover rounded-lg" />
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="bg-blue-50 py-16 px-6 text-center slide-in-left" data-delay="0.5s" id="testimonials">
+      <h2 class="text-2xl font-semibold mb-8">Brands That Trust Resa</h2>
+      <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client 1" class="w-16 h-16 rounded-full mb-4 object-cover" />
+          <blockquote class="text-md italic mb-2">"Our ACoS dropped 40% in 3 months while sales scaled. Finally an agency that gets it."</blockquote>
+          <span class="text-sm font-semibold text-gray-700">Alex P.</span>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client 2" class="w-16 h-16 rounded-full mb-4 object-cover" />
+          <blockquote class="text-md italic mb-2">"Their team just gets Amazon—it's rare to find this kind of strategic depth and speed."</blockquote>
+          <span class="text-sm font-semibold text-gray-700">Samantha R.</span>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center">
+          <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="Client 3" class="w-16 h-16 rounded-full mb-4 object-cover" />
+          <blockquote class="text-md italic mb-2">"Resa's insights gave us clarity we didn't even know we were missing."</blockquote>
+          <span class="text-sm font-semibold text-gray-700">Michael T.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Amazon Expertise Section (Boxed, Gray Background) -->
+    <section class="flex flex-col md:flex-row items-center max-w-5xl mx-auto bg-gray-100 rounded-2xl shadow-lg my-16 py-10 px-6 md:px-12 gap-8 scale-in" data-delay="0.55s">
+      <div class="flex-shrink-0 flex justify-center w-full md:w-auto mb-8 md:mb-0">
+        <img src="assets/amazon2.jpg" alt="Amazon Logo" class="h-36 w-auto md:h-48 rounded-xl shadow-md" />
+      </div>
+      <div class="flex-1 text-center md:text-left">
+        <h2 class="text-3xl font-bold mb-4">Amazon is Our Arena</h2>
+        <p class="text-lg mb-2">We're not just familiar with Amazon—we live and breathe it. Our team leverages years of hands-on experience to help brands win in the world's most competitive marketplace.</p>
+        <p class="text-md text-gray-600">From PPC to listings, creative to compliance, we know what it takes to stand out and scale on Amazon. Partner with us and put proven Amazon expertise on your side.</p>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="text-center py-16 px-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white fade-in-up" data-delay="0.6s">
+      <h2 class="text-2xl font-bold mb-4">🚀 Let's turn your ad spend into real growth—starting now.</h2>
+      <button class="bg-white text-indigo-600 font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-gray-100 open-modal transition" type="button">
+        Book a Free Strategy Call
+      </button>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="py-16 px-6 max-w-4xl mx-auto fade-in-up" data-delay="0.7s">
+      <h2 class="text-2xl font-semibold text-center mb-8">FAQ – Still Wondering?</h2>
+      <div class="space-y-6">
+        <div>
+          <h3 class="font-bold">How fast can I see results?</h3>
+          <p>It depends on your current setup, but most brands start seeing measurable improvements within the first 30–45 days.</p>
+        </div>
+        <div>
+          <h3 class="font-bold">Do you manage everything or just ads?</h3>
+          <p>We handle full-funnel growth: PPC, creatives, listings, and strategy. You choose the scope—we deliver the scale.</p>
+        </div>
+        <div>
+          <h3 class="font-bold">What if I've been burned by an agency before?</h3>
+          <p>We hear that a lot. That's why we prove value early, keep you looped in with live dashboards, and work on transparent terms.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6 mt-16" id="contact">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between px-6 gap-8">
+        <div class="flex flex-col items-center md:items-start gap-3 mb-8 md:mb-0">
+          <div class="flex items-center gap-3">
+            <img src="assets/nobg.png" alt="Resa Brand Logo" class="h-12 w-auto drop-shadow" />
+            <span class="font-bold text-lg tracking-wide">RESA MARKETING SOLUTIONS - FZCO</span>
+          </div>
+          <div class="text-sm text-gray-400">All rights reserved &copy; <span id="year"></span></div>
+        </div>
+        <div class="w-full md:w-auto flex-1">
+          <form action="https://formspree.io/f/xnnvovqa" method="POST" class="flex flex-col md:flex-row items-center gap-3 bg-gray-800 rounded-xl p-4 shadow-md">
+            <label for="newsletter" class="sr-only">Email address</label>
+            <input type="email" id="newsletter" name="newsletter" required placeholder="Your email for newsletter" class="flex-1 px-4 py-2 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900" />
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition">Sign Up</button>
+          </form>
+          <p class="text-xs text-gray-400 mt-2 text-center md:text-left">Stay updated with the latest from Resa. No spam, ever.</p>
+        </div>
+      </div>
+      <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+    </footer>
   </body>
 </html>
